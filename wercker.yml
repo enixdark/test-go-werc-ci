@@ -16,6 +16,24 @@ box: golang
 
     # - mongo
     # http://devcenter.wercker.com/docs/services/mongodb.html
+dev:
+  steps:
+    - setup-go-workspace:
+        package-dir: github.com/enixdark/test-go-werc-ci
+    - script:
+        name: env
+        code: env
+    - script:
+        name: go get
+        code: |
+          cd $WERCKER_SOURCE_DIR
+          go version
+          go get -u github.com/Masterminds/glide
+          export PATH=$WERCKER_SOURCE_DIR/bin:$PATH
+          glide install
+    - internal/watch:
+        code: go run main.go
+        reload: true
 build:
   # The steps that will be executed on build
   # Steps make up the actions in your pipeline
@@ -24,14 +42,18 @@ build:
   steps:
     # Sets the go workspace and places you package
     # at the right place in the workspace tree
-    - setup-go-workspace
+    - setup-go-workspace:
+        package-dir: github.com/enixdark/test-go-werc-ci
 
     # Gets the dependencies
     - script:
         name: go get
         code: |
-          go get
-
+          cd $WERCKER_SOURCE_DIR
+          go version
+          go get -u github.com/Masterminds/glide
+          export PATH=$WERCKER_SOURCE_DIR/bin:$PATH
+          glide install
     # Build the project
     - script:
         name: go build
@@ -42,4 +64,28 @@ build:
     - script:
         name: go test
         code: |
-          go test ./...
+          go test -v $(glide novendor)
+    - script:
+        name: copy files to wercker output
+        code: |
+          cp -R ./ ${WERCKER_OUTPUT_DIR}
+
+# deploy:
+#  steps:
+#    - internal/docker-push:
+#        username: $DOCKER_USERNAME
+#        password: $DOCKER_PASSWORD
+#        cmd: /pipeline/source/hello
+#        port: "8080"
+#        tag: latest
+#        repository: cqshinn92/test
+#        registry: https://registry.hub.docker.com
+
+#    - cng/cf-deploy:
+#        api: $API
+#        user: $USER
+#        password: $PASSWORD
+#        org: $ORG
+#        space: $SPACE
+#        appname: wercker-test-ci
+#        docker_image: cqshinn92/test
