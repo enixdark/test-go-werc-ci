@@ -2,7 +2,7 @@ package main
 
 import(
   "fmt"
-  "./npcs"
+  "github.com/enixdark/test-go-werc-ci/npcs"
 )
 
 func main() {
