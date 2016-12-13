@@ -1,10 +1,11 @@
-package main 
-
+package main
 
 import (
   "os"
   "fmt"
+
   "github.com/cloudfoundry-community/go-cfenv"
+
   service "github.com/enixdark/test-go-werc-ci/service"
 )
 
