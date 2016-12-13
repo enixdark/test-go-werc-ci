@@ -2,7 +2,7 @@ package service
 
 import (
   "net/http"
-  "github.com/codegangsta/negroni"
+  "github.com/urfave/negroni"
   "github.com/gorilla/mux"
   "github.com/unrolled/render"
 )
@@ -27,6 +27,7 @@ func initRoutes(mx * mux.Router, formatter *render.Render){
 
 func testHandler(formatter * render.Render) http.HandleFunc{
   return func(w http.ResponseWriter, req* http.Request){
-    formatter.JSON(w, http.StatusOK, struct{ Test string }{"This is a test"})
+    formatter.JSON(w, http.StatusOK, 
+      struct{ Test string }{"This is a test"})
   }
 }
